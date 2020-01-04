@@ -1,0 +1,5 @@
+{
+    "name": "TextArea",
+    "main": "./TextArea.js",
+    "private": true
+}

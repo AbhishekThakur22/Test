@@ -1,0 +1,5 @@
+{
+    "name": "Camera",
+    "main": "./Camera.js",
+    "private": true
+}

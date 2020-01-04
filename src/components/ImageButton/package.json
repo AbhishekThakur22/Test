@@ -1,0 +1,5 @@
+{
+    "name": "ImageButton",
+    "main": "./ImageButton.js",
+    "private": true
+}
