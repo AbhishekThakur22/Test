@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   Animated,
 } from 'react-native';
+const hexOpacityValue = '40';
 
 class Accordion extends Component {
   constructor(props) {
@@ -21,6 +22,7 @@ class Accordion extends Component {
 
     this.state = {
       sideIcon: props.sideIcon,
+      colorCode: props.color,
       title: props.title,
       totalAmount: props.totalSaleAmount,
       expanded: false,
@@ -70,15 +72,29 @@ class Accordion extends Component {
     }
 
     return (
-      <Animated.View style={styles.container}>
+      <Animated.View style={[styles.container]}>
         <View
-          style={[styles.titleContainer, {backgroundColor: this.props.bgColor}]}
+          style={[
+            styles.titleContainer,
+            this.state.expanded && styles.noLowerBorderRadius,
+          ]}
           onLayout={() => {
             this._setMinHeight.bind(this);
           }}
           onStartShouldSetResponderCapture={this.toggle.bind(this)}>
-          <Image style={styles.buttonImage} source={this.state.sideIcon} />
-          <Text style={styles.title}>{this.state.title}</Text>
+          <View
+            style={[
+              styles.sideImageContainer,
+              {backgroundColor: this.state.colorCode + hexOpacityValue},
+            ]}>
+            <Image
+              style={[styles.sideImage, {tintColor: this.state.colorCode}]}
+              source={this.state.sideIcon}
+            />
+          </View>
+          <Text style={[styles.title, {color: this.state.colorCode}]}>
+            {this.state.title}
+          </Text>
           <TouchableHighlight style={styles.button} underlayColor="#000000">
             <Image style={styles.buttonImage} source={icon} />
           </TouchableHighlight>
@@ -100,24 +116,36 @@ export default Accordion;
 
 var styles = StyleSheet.create({
   container: {
-    // backgroundColor: '#fff',
     marginHorizontal: 10,
-    overflow: 'hidden',
+    // backgroundColor: '#fff',
+  },
+  noLowerBorderRadius: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   titleContainer: {
+    marginTop: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
     flex: 1,
     flexDirection: 'row',
-    borderBottomWidth: 0.5,
+    elevation: 3,
+    // borderBottomWidth: 0.5,
     borderColor: '#656565',
+    justifyContent: 'center',
   },
   title: {
     // flex: 1,
     //padding: 10,
     // flexDirection: 'row',
     //color: '#389EBE',
-    paddingTop: 12,
+    // paddingTop: 12,
     paddingLeft: 5,
     fontWeight: 'bold',
+    alignSelf: 'center',
     fontSize: 14,
     flex: 1,
   },
@@ -131,17 +159,38 @@ var styles = StyleSheet.create({
   button: {
     width: 20,
     height: 20,
+    alignSelf: 'center',
+  },
+  sideImageContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    justifyContent: 'center',
+  },
+  sideImage: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+    tintColor: '#000000',
+    alignSelf: 'center',
   },
   buttonImage: {
     width: 15,
     height: 15,
     resizeMode: 'contain',
     tintColor: '#000000',
-    marginTop: 10,
+    // marginTop: 10,
     marginRight: 5,
   },
   body: {
-    padding: 10,
-    paddingTop: 0,
+    // paddingTop: 5,
+    // backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    // paddingTop: 0,
+  },
+  lowerBorderRadius: {
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
   },
 });

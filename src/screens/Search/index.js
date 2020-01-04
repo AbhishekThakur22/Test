@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
-import { FlatList, Alert } from 'react-native'
+import { FlatList, Alert, StyleSheet } from 'react-native'
 import {
-  Container, Left, Body, Right, Text, ListItem, Header, Input, Icon, Item, Button
+  Container, Left, Body, Right, Text, ListItem, Header, Input, Icon, Item, Button, View
 } from 'native-base';
 import { get, debounce, isEmpty } from 'lodash'
 import { observer, inject, } from "mobx-react"
@@ -11,6 +11,14 @@ import { STORE_KEY } from '../../common/utils'
 import Accordion from '../../components/Accordion/Accordion';
 
 const sideBlueIcon = require('../../assets/images/logo.png');
+const categoryImages = [
+  image = require('../../assets/images/meat.png'),
+  image = require('../../assets/images/fish.png'),
+  image = require('../../assets/images/apple-fruit.png'),
+  image = require('../../assets/images/apple-fruit.png'),
+  image = require('../../assets/images/roast-turkey.png'),
+  image = require('../../assets/images/roast-turkey.png'),
+]
 
 @inject("userModel", "applicationModel")
 @observer
@@ -105,20 +113,20 @@ export default class Search extends React.Component {
     this.props.navigation.navigate('DebtorDetails', { DebtorID: debtorID })
   }
   
-  renderSubCategoryEl = ({ item }) => (<Fragment>
-    {!isEmpty(item.subCategoryname) && <ListItem itemDivider>
-         <Text>{item.subCategoryname}</Text>
-      </ListItem>}
+  renderSubCategoryEl = ({ item }, colorCode) => (<Fragment>
+    {!isEmpty(item.subCategoryname) && <View style={styles.subCategoryListContainer}>
+         <Text style={{color: colorCode}}>{item.subCategoryname.toUpperCase()}</Text>
+      </View>}
       {this.renderSbCtgryItemList(get(item,'items',[]))}
   </Fragment>
   )
 
   renderItem = ({ item }) =>
-  (<ListItem>
-  <Body>
+  (
+    <View style={styles.subCategoryItemContainer}>
   <Text>{item}</Text>
-  </Body>
-  </ListItem>)
+    </View>
+  )
 
 renderSbCtgryItemList = (itemList = []) => {
     return (<FlatList
@@ -130,23 +138,43 @@ renderSbCtgryItemList = (itemList = []) => {
     )
   }
 
-  renderSubCategoryList = (subCategories = []) => {
+  renderSubCategoryList = (subCategories = [], colorCode, categoryQuote) => {
     return (<FlatList
+    style={styles.subCategoryList}
       data={subCategories}
       numColumns={1}
-      renderItem={this.renderSubCategoryEl}
+      renderItem={(item) => this.renderSubCategoryEl(item, colorCode)}
       keyExtractor={this.subCategoryKeyExtractor}
+      ListFooterComponent={() => 
+        !isEmpty(categoryQuote) && <View style={styles.categoryQuoteView}>
+          <Text style={styles.categoryQuoteText}>
+            {categoryQuote}
+          </Text>
+        </View>
+      }
     />
     )
   }
 
-  renderCategory = ({ item }) => {
+  renderCategory = ({ item, index }) => {
     return (<Fragment>
+      <View style={styles.accordionContainer}>
       <Accordion  title={item.category.servingSize ? 
         get(item,'category.categoryName','category name') + ` (${item.category.servingSize})` : 
-        get(item,'category.categoryName','category name')}>
-      {this.renderSubCategoryList(get(item,'category.subcategories',[]))}
+        get(item,'category.categoryName','category name')}
+        sideIcon={categoryImages[index]}
+        color={get(item,'category.colorCode','#000000')}
+        >
+      {this.renderSubCategoryList(get(item,'category.subcategories',[]), 
+      get(item,'category.colorCode','#000000'),
+      get(item,'category.quote',''))}
+      {!isEmpty(item.category.protip) && <View>
+        <Text>
+          {item.category.protip}
+        </Text>
+      </View>}
       </Accordion>
+      </View>
     </Fragment>
     )
   }
@@ -156,7 +184,7 @@ renderSbCtgryItemList = (itemList = []) => {
     const { searchKey } = this.state
     const categories = userModel.getPlanets()
     return (
-      <Container>
+      <Container style={styles.container} >
         <Header searchBar rounded>
           <Item>
             <Icon name="ios-search" />
@@ -178,3 +206,36 @@ renderSbCtgryItemList = (itemList = []) => {
     )
   }
 }
+
+const styles=StyleSheet.create({
+  container: {backgroundColor: '#E0E0E0'},
+  subCategoryListContainer : {
+    marginTop: 10, 
+    marginLeft: 10
+  },
+  subCategoryItemContainer: {
+    paddingVertical: 10,
+    paddingLeft: 10, 
+    justifyContent: 'center', 
+  borderBottomWidth: 1,
+   borderColor: '#E0E0E0', 
+  width: '100%'
+},
+subCategoryList: {
+  backgroundColor: '#FFFFFF', 
+paddingTop: 5
+},
+categoryQuoteText: {
+  padding: 15,
+  backgroundColor: '#F0F8FF', 
+textAlign: 'center', 
+borderRadius: 12,
+},
+categoryQuoteView: {
+  flex: 0, 
+  padding: 15,
+   alignSelf: 'center',
+    justifyContent: 'center'
+  },
+  accordionContainer: {marginBottom: 10}
+})
