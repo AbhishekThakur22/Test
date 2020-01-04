@@ -119,6 +119,7 @@ var styles = StyleSheet.create({
     paddingLeft: 5,
     fontWeight: 'bold',
     fontSize: 14,
+    flex: 1,
   },
   titleAmount: {
     padding: 10,
@@ -132,8 +133,8 @@ var styles = StyleSheet.create({
     height: 20,
   },
   buttonImage: {
-    width: 20,
-    height: 20,
+    width: 15,
+    height: 15,
     resizeMode: 'contain',
     tintColor: '#000000',
     marginTop: 10,
